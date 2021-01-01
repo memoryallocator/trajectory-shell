@@ -92,9 +92,7 @@ static const char* const pcWelcomeMessage =
 
 void shell_start(void) {
 #ifdef _USE_COMPLETE
-  const size_t kCompletableCommandsIncludingManCount = kCompletableCommandsCount
-                                                       + (kCompletableCommandsCount
-                                                          - 1);  // { command } U { man command}
+  const size_t kCompletableCommandsIncludingManCount = kCompletableCommandsCount * 2;  // { command } U { man command}
   char** commands = calloc(kCompletableCommandsIncludingManCount, sizeof(char*));
   if (commands == NULL) {
     abort();
@@ -107,21 +105,36 @@ void shell_start(void) {
       max_command_len = kCurrCommandLen;
     }
 
-    commands[i] = malloc((kCurrCommandLen + 1) * sizeof(char));
+    commands[i] = calloc(kCurrCommandLen + 1, sizeof(char));
     if (commands[i] == NULL) {
       abort();
     }
     strcpy(commands[i], kCompletableCommands[i]);
   }
 
-  char* const man_command = calloc(max_command_len + 5, sizeof(char));  // "man " + ... + '\0'
+  const size_t kManCommandLen = max_command_len + 5;
+  char* const man_command = calloc(kManCommandLen, sizeof(char));  // "man " + command + '\0'
   man_command[0] = 'm';
   man_command[1] = 'a';
   man_command[2] = 'n';
   man_command[3] = ' ';
-  for (size_t i = 0; i < kCompletableCommandsCount - 1; ++i) {
-    strcpy(man_command + 4, kCompletableCommands[i]);
+  for (size_t i = 0; i < kCompletableCommandsCount; ++i) {
+    man_command[4] = '\0';
+    char* const curr_command = calloc(strlen(kCompletableCommands[i]) + 1, sizeof(char));
+    if (curr_command == NULL) {
+      abort();
+    }
+    strcpy(curr_command, kCompletableCommands[i]);
+
+    char* const command_name = strtok(curr_command, " ");
+    strcat(man_command, command_name);
+
+    commands[kCompletableCommandsCount + i] = calloc(kManCommandLen + 1, sizeof(char));
+    if (commands[i] == NULL) {
+      abort();
+    }
     strcpy(commands[kCompletableCommandsCount + i], man_command);
+    free(curr_command);
   }
 
   struct dfa_t autocompletion_dfa = autocompletion_dfa_create(commands, kCompletableCommandsIncludingManCount);
