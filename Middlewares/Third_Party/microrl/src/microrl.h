@@ -82,15 +82,15 @@ typedef struct {
 	int cmdlen;                        // last position in command line
 	int cursor;                        // input cursor
 	int (*execute)(const char *const argv);
-//	int (*execute) (int argc, const char * const * argv );            // ptr to 'execute' callback
-//	int (*get_completion)(const char* const, char const **);
-//	char* (*get_completion)(const char*); // ptr to 'completion' callback
-	void (*print)(const char*);                       // ptr to 'print' callback
+	//	int (*execute) (int argc, const char * const * argv );            // ptr to 'execute' callback
+	//	int (*get_completion)(const char* const, char const **);
+	//	char* (*get_completion)(const char*); // ptr to 'completion' callback
+	void (*print)(const char *);                       // ptr to 'print' callback
 #ifdef _USE_CTLR_C
 	void (*sigint)(void);
 #endif
 #ifdef _USE_COMPLETE
-	struct dfa_t *autocompleter;
+	struct dfa *autocompleter;
 	int prev_tab_pressed_pos;
 #endif
 } microrl_t;

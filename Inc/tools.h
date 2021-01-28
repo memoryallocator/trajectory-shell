@@ -6,22 +6,22 @@
 #include <iso646.h>
 
 // Deterministic Finite Automata (ASCII-only) node
-struct dfa_node_t {
-    const struct dfa_node_t* const next[128];
-    size_t autocompletion_offset;
-    const size_t autocompletion_variants_count;
-    const char** const autocompletion_variants;
+struct dfa_node {
+	const struct dfa_node *const next[128];
+	size_t autocompletion_offset;
+	const size_t autocompletion_variants_count;
+	const char **const autocompletion_variants;
 };
 
 // Deterministic Finite Automata (ASCII-only)
-struct dfa_t {
-    struct dfa_node_t root;
+struct dfa {
+	struct dfa_node root;
 };
 
-const char* dfa_get_next_autocompletion_variant(const struct dfa_t*, const char*);
+const char *dfa_get_next_autocompletion_variant(const struct dfa *, const char *);
 
-struct dfa_t* autocompletion_dfa_reset(struct dfa_t* dfa);
+struct dfa *autocompletion_dfa_reset(struct dfa *dfa);
 
-struct dfa_t autocompletion_dfa_create(char* const* commands, size_t commands_count);
+struct dfa autocompletion_dfa_create(char *const *commands, size_t commands_count);
 
 #endif  // TRAJECTORY_SHELL_TOOLS_H
